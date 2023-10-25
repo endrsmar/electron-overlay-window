@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <xcb/xcb.h>
 #include "overlay_window.h"
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 static xcb_connection_t* x_conn;
 static xcb_window_t root;
@@ -337,4 +339,19 @@ void ow_focus_target() {
   xcb_send_event(x_conn, 0, root, XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT, (char*)event);
   xcb_flush(x_conn);
   free(event);
+}
+
+void ow_screenshot(uint8_t* out, uint32_t width, uint32_t height) {
+	Display *display = XOpenDisplay(NULL);
+	XImage *image = XGetImage(display,
+	                          XDefaultRootWindow(display),
+	                          (int)0,
+	                          (int)0,
+	                          width,
+	                          height,
+	                          AllPlanes, ZPixmap);
+	XCloseDisplay(display);
+	if (image == NULL) return;
+  memcpy(out, image->data, height * image->bytes_per_line);
+	XDestroyImage(image);
 }

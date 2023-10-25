@@ -25,11 +25,11 @@
       	}],
         ['OS=="linux"', {
           'defines': [
-            '_GNU_SOURCE'
+            '_GNU_SOURCE', '_USE_X11'
           ],
           'link_settings': {
             'libraries': [
-              '-lxcb', '-lpthread'
+              '-lxcb', '-lpthread', '-lX11'
             ]
           },
           'cflags': ['-std=c99', '-pedantic', '-Wall', '-pthread'],
